@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.playwright-mcp/
+reentry-*.png
+*.log
+.DS_Store
+PRESENCE_PRD.md
+Vibe2Ship - Problem Statements & Submission Guidelines.md
+Vibe2Ship - Problem Statements & Submission Guidelines.pdf
