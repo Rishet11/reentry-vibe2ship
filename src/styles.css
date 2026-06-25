@@ -177,6 +177,11 @@ button:disabled {
   gap: 8px;
 }
 
+.view-row {
+  display: flex;
+  gap: 8px;
+}
+
 .mode,
 .ghost-button,
 .secondary-button,
@@ -258,6 +263,32 @@ button:disabled {
   line-height: 1.45;
 }
 
+.example-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 12px 0 10px;
+}
+
+.example-row span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.example-button {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: white;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 680;
+}
+
 .status-chip {
   white-space: nowrap;
   background: var(--surface-soft);
@@ -284,6 +315,10 @@ textarea {
 textarea:focus {
   border-color: rgba(15, 143, 125, 0.5);
   box-shadow: 0 0 0 4px rgba(15, 143, 125, 0.09);
+}
+
+textarea::placeholder {
+  color: #8f9995;
 }
 
 .action-row {
@@ -358,6 +393,41 @@ textarea:focus {
 .check-list {
   display: grid;
   gap: 10px;
+}
+
+.feature-row {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.feature-bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  margin-top: 4px;
+  background: var(--teal);
+}
+
+.feature-row strong,
+.feature-row span {
+  display: block;
+}
+
+.feature-row strong {
+  font-size: 13px;
+}
+
+.feature-row span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .check-row {

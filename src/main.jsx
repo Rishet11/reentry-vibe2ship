@@ -56,8 +56,9 @@ const completedChecks = [
 ];
 
 function App() {
-  const [brief, setBrief] = useState(hackathonBrief);
+  const [brief, setBrief] = useState('');
   const [mode, setMode] = useState('deadline');
+  const [view, setView] = useState('start');
   const [stage, setStage] = useState('intake');
   const [isGenerating, setIsGenerating] = useState(false);
   const [artifact, setArtifact] = useState(null);
@@ -77,10 +78,16 @@ function App() {
   };
 
   const resetSession = () => {
-    setBrief(hackathonBrief);
+    setBrief('');
+    setView('start');
     setStage('intake');
     setArtifact(null);
     setIsGenerating(false);
+  };
+
+  const loadExample = (type) => {
+    setBrief(type === 'deadline' ? hackathonBrief : 'I want to learn React and need a tiny first project I can finish today.');
+    setMode(type === 'deadline' ? 'deadline' : 'momentum');
   };
 
   return (
@@ -110,14 +117,25 @@ function App() {
       <section className="workspace">
         <header className="topbar">
           <div>
-            <h1>Make the first imperfect version.</h1>
-            <p>Paste a deadline brief. Reentry extracts what matters, creates Version Zero, and checks what still blocks submission.</p>
+            <h1>Turn a stuck task into a first draft.</h1>
+            <p>Paste anything you are avoiding. Reentry makes the first rough version, then checks what still needs to be finished.</p>
           </div>
           <button className="ghost-button" onClick={resetSession}>
             <RefreshCw size={16} />
             Reset demo
           </button>
         </header>
+
+        <section className="view-row" aria-label="View selector">
+          <button className={view === 'start' ? 'mode active' : 'mode'} onClick={() => setView('start')}>
+            <Sparkles size={16} />
+            Start
+          </button>
+          <button className={view === 'finish' ? 'mode active' : 'mode'} onClick={() => setView('finish')}>
+            <ClipboardCheck size={16} />
+            Finish
+          </button>
+        </section>
 
         <section className="mode-row" aria-label="Mode selector">
           <button className={mode === 'deadline' ? 'mode active' : 'mode'} onClick={() => setMode('deadline')}>
@@ -134,10 +152,16 @@ function App() {
           <section className="primary-panel">
             <div className="panel-heading">
               <div>
-                <h2>Paste deadline brief</h2>
-                <p>Use the Vibe2Ship requirements or replace them with any assignment, interview, or submission prompt.</p>
+                <h2>Describe what you are stuck on</h2>
+                <p>Tell Reentry the task, deadline, or goal. It will turn it into a first draft and show the next move.</p>
               </div>
               <span className="status-chip">{mode === 'deadline' ? 'Deadline Reentry' : 'Momentum Reentry'}</span>
+            </div>
+
+            <div className="example-row">
+              <span>Examples</span>
+              <button className="example-button" onClick={() => loadExample('deadline')}>Load deadline example</button>
+              <button className="example-button" onClick={() => loadExample('momentum')}>Load learning example</button>
             </div>
 
             <textarea
@@ -145,6 +169,7 @@ function App() {
               onChange={(event) => setBrief(event.target.value)}
               spellCheck="false"
               aria-label="Deadline brief"
+              placeholder="Describe the task, deadline, or goal you are avoiding..."
             />
 
             <div className="action-row">
@@ -160,29 +185,59 @@ function App() {
           </section>
 
           <aside className="readiness-panel">
-            <div className="readiness-header">
-              <div>
-                <span>Submission readiness</span>
-                <h2>{statusLabel(verdict, checks)}</h2>
-                <p>{statusHelper(verdict, checks)}</p>
-              </div>
-              <VerdictIcon verdict={verdict} />
-            </div>
+            {view === 'start' ? (
+              <>
+                <div className="readiness-header">
+                  <div>
+                    <span>What Reentry does</span>
+                    <h2>Find the task. Make the draft.</h2>
+                    <p>Start here if you are stuck. Reentry reduces the work to one rough first version and one obvious next step.</p>
+                  </div>
+                  <CheckCircle2 className="verdict ready" size={30} />
+                </div>
 
-            <div className="plain-summary">
-              This panel tells you, in plain English, what still has to be done before the submission is ready.
-            </div>
+                <div className="plain-summary">
+                  It is for tasks you already know matter, but have not started because opening them feels too large.
+                </div>
 
-            <div className="check-list">
-              {checks.map((check) => (
-                <CheckRow key={check.label} check={check} />
-              ))}
-            </div>
+                <div className="check-list">
+                  <FeatureRow title="First draft" body="A rough doc, outline, email, or checklist." />
+                  <FeatureRow title="Next move" body="Three concrete steps, not a giant plan." />
+                  <FeatureRow title="Finish view" body="A separate check for links, sharing, and submission." />
+                </div>
 
-            <div className="next-action">
-              <span>Next step</span>
-              <strong>{artifact ? 'Add deploy and GitHub links, then make the doc public.' : 'Create Version Zero first, then we can check the submission.'}</strong>
-            </div>
+                <div className="next-action">
+                  <span>Optional finish check</span>
+                  <strong>Switch to Finish to inspect links and sharing only when you need it.</strong>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="readiness-header">
+                  <div>
+                    <span>Submission readiness</span>
+                    <h2>{statusLabel(verdict, checks)}</h2>
+                    <p>{statusHelper(verdict, checks)}</p>
+                  </div>
+                  <VerdictIcon verdict={verdict} />
+                </div>
+
+                <div className="plain-summary">
+                  This panel tells you, in plain English, what still has to be done before the submission is ready.
+                </div>
+
+                <div className="check-list">
+                  {checks.map((check) => (
+                    <CheckRow key={check.label} check={check} />
+                  ))}
+                </div>
+
+                <div className="next-action">
+                  <span>Next step</span>
+                  <strong>{artifact ? 'Add deploy and GitHub links, then make the doc public.' : 'Create Version Zero first, then we can check the submission.'}</strong>
+                </div>
+              </>
+            )}
           </aside>
         </div>
 
@@ -214,6 +269,18 @@ function CheckRow({ check }) {
       <div>
         <strong>{check.label}</strong>
         <span>{check.evidence}</span>
+      </div>
+    </div>
+  );
+}
+
+function FeatureRow({ title, body }) {
+  return (
+    <div className="feature-row">
+      <div className="feature-bullet" aria-hidden="true" />
+      <div>
+        <strong>{title}</strong>
+        <span>{body}</span>
       </div>
     </div>
   );
